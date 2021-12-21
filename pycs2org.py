@@ -1,9 +1,59 @@
 #!/usr/bin/python3
 
+import os
 import sys
 import argparse
-from datetime import date, datetime, timedelta, tzinfo
+from datetime import datetime, timezone
 from icalendar import Calendar
+import pytz
+from pytz import timezone
+
+
+def convertTZ(dateTime):
+    if isinstance(dateTime, datetime):
+        return dateTime.astimezone().strftime("%Y-%m-%d %H:%M")
+    else:
+        return dateTime.strftime("%Y-%m-%d")
+
+
+class Convertor:
+    def __init__(self, iCalendar):
+        icalFile = open(iCalendar, "r", encoding="utf-8")
+        self.calendar = Calendar.from_ical(icalFile.read())
+
+    def __call__(self):
+        results = ""
+
+        for event in self.calendar.walk("VEVENT"):
+            summary = ""
+            if event.get("summary") is not None:
+                summary = event.get("summary")
+                summary = summary.replace("\\,", ",")
+            else:
+                summary = "(No title)"
+            results += "* {}\n".format(summary)
+
+            dtstart = event.get("dtstart").dt
+            if event.get("dtend") is not None:
+                dtend = event.get("dtend").dt
+
+            if dtstart and dtend:
+                results += "  <{}>--<{}>\n".format(
+                    convertTZ(dtstart),
+                    convertTZ(dtend),
+                )
+
+            if dtstart and not dtend:
+                results += "  <{}>\n".format(convertTZ(dtstart))
+
+            if event.get("description") is not None:
+                description = "\n".join(event.get("description").split("\\n"))
+                description = description.replace("\\,", ",")
+                results += "{}\n".format(description)
+
+            results += "\n"
+
+        return results
 
 
 def createParser():
@@ -51,47 +101,24 @@ def main():
     parser = createParser()
     args = parser.parse_args()
 
-    fh = open(args.INPUT_FILE, "r", encoding="utf-8")
-
     if args.output:
-        fh_w = open(args.output[0], "w", encoding="utf-8")
-    else:
-        fh_w = sys.stdout
 
-    try:
-        cal = Calendar.from_ical(fh.read())
-    except:
-        print("ERROR parsing ical file", file=sys.stderr)
-        exit(1)
-        pass
-
-    for event in cal.walk():
-        SUMMARY = ""
-        if event.get("summary") is not None:
-            SUMMARY = event.get("summary")
-            SUMMARY = SUMMARY.replace("\\,", ",")
+        # Check if a file with the same name as output file exists
+        if os.path.exists(args.output[0]) and not args.force_clobber:
+            print(
+                "File {outfile} exists.\nPlease specify a new name or run"
+                "script again with -f to force clobbering of existing "
+                "file".format(outfile=args.output[0])
+            )
         else:
-            SUMMARY = "(No title)"
-        fh_w.write("* {}\n".format(SUMMARY))
+            convertor = Convertor(args.INPUT_FILE)
+            with open(args.output[0], "w") as outFile:
+                outFile.write(convertor())
 
-        if event.get("dtstart") and event.get("dtend"):
-            fh_w.write(
-                "  <{}>--<{}>\n".format(
-                    event.get("dtstart").dt.strftime("%Y-%m-%d %H:%M"),
-                    event.get("dtend").dt.strftime("%Y-%m-%d %H:%M"),
-                )
-            )
-        if event.get("dtstart") and not event.get("dtend"):
-            fh_w.write(
-                "  <{}>\n".format(event.get("dtstart").dt.strftime("%Y-%m-%d %H:%M"))
-            )
-
-        if event.get("description") is not None:
-            description = "\n".join(event.get("description").split("\\n"))
-            description = description.replace("\\,", ",")
-            fh_w.write("{}\n".format(description))
-
-        fh_w.write("\n")
+    # If no output file is given print data to stdout
+    else:
+        convertor = Convertor(args.INPUT_FILE)
+        print(convertor())
 
 
 if __name__ == "__main__":
