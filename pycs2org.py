@@ -7,11 +7,52 @@ from datetime import datetime, timezone
 from icalendar import Calendar
 
 
-def convertTZ(dateTime):
+def datetime2String(dateTime):
     if isinstance(dateTime, datetime):
         return dateTime.astimezone().strftime("%Y-%m-%d %H:%M")
     else:
         return dateTime.strftime("%Y-%m-%d")
+
+
+class orgEvent:
+    def __init__(self, event):
+        # Store the summary of the event
+        if event.get("summary") is not None:
+            self.summary = event.get("summary")
+            self.summary = self.summary.replace("\\,", ",")
+        else:
+            self.summary = "(No title)"
+
+        # Store the start and end time of the event
+        self.dtstart = event.get("dtstart").dt
+        if event.get("dtend") is not None:
+            self.dtend = event.get("dtend").dt
+        else:
+            self.dtend = None
+
+        # Store the description of the event
+        if event.get("description") is not None:
+            self.description = "\n".join(event.get("description").split("\\n"))
+            self.description = self.description.replace("\\,", ",")
+        else:
+            self.description = ""
+
+    def __str__(self):
+        results = ""
+        results = "* {}\n".format(self.summary)
+
+        if self.dtstart and self.dtend:
+            results += "  <{}>--<{}>\n".format(
+                datetime2String(self.dtstart),
+                datetime2String(self.dtend),
+            )
+
+        elif self.dtstart and not self.dtend:
+            results += "  <{}>\n".format(datetime2String(self.dtstart))
+
+        results += "{}\n".format(self.description)
+
+        return results
 
 
 class Convertor:
@@ -22,34 +63,9 @@ class Convertor:
     def __call__(self):
         results = ""
 
-        for event in self.calendar.walk("VEVENT"):
-            summary = ""
-            if event.get("summary") is not None:
-                summary = event.get("summary")
-                summary = summary.replace("\\,", ",")
-            else:
-                summary = "(No title)"
-            results += "* {}\n".format(summary)
-
-            dtstart = event.get("dtstart").dt
-            if event.get("dtend") is not None:
-                dtend = event.get("dtend").dt
-
-            if dtstart and dtend:
-                results += "  <{}>--<{}>\n".format(
-                    convertTZ(dtstart),
-                    convertTZ(dtend),
-                )
-
-            if dtstart and not dtend:
-                results += "  <{}>\n".format(convertTZ(dtstart))
-
-            if event.get("description") is not None:
-                description = "\n".join(event.get("description").split("\\n"))
-                description = description.replace("\\,", ",")
-                results += "{}\n".format(description)
-
-            results += "\n"
+        for component in self.calendar.walk("VEVENT"):
+            event = orgEvent(component)
+            results += str(event)
 
         return results
 
