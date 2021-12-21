@@ -5,8 +5,6 @@ import sys
 import argparse
 from datetime import datetime, timezone
 from icalendar import Calendar
-import pytz
-from pytz import timezone
 
 
 def convertTZ(dateTime):
