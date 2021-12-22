@@ -8,14 +8,14 @@ from icalendar import Calendar
 import recurring_ical_events
 
 
-def orgDate(dateTime):
+def org_date(dateTime):
     if isinstance(dateTime, datetime):
         return dateTime.astimezone().strftime("<%Y-%m-%d %a %H:%M>")
     else:
         return dateTime.strftime("<%Y-%m-%d %a>")
 
 
-def createHeader(title="Calendar", author="", email=""):
+def create_header(title="Calendar", author="", email=""):
     results = ""
     results += "#+TITLE: {}\n".format(title)
     results += "#+AUTHOR: {}\n".format(author)
@@ -66,13 +66,13 @@ class orgEvent:
         # Event has a start time and end time
         if self.dtstart and self.dtend:
             results += "{}--{}\n".format(
-                orgDate(self.dtstart),
-                orgDate(self.dtend),
+                org_date(self.dtstart),
+                org_date(self.dtend),
             )
 
         # Event only has a start time
         elif self.dtstart and not self.dtend:
-            results += "{}\n".format(orgDate(self.dtstart))
+            results += "{}\n".format(org_date(self.dtstart))
 
         results += "{}\n".format(self.description)
 
@@ -88,7 +88,7 @@ class Convertor:
 
     def __call__(self):
         results = ""
-        results = createHeader()
+        results = create_header()
         events = recurring_ical_events.of(self.calendar).between(
             self.startDate, self.endDate
         )
@@ -99,7 +99,7 @@ class Convertor:
         return results
 
 
-def createParser():
+def create_parser():
     """Creates the default ArgumentParser object for the script
 
     Creates a parser using the argparse library to collect arguments
@@ -153,7 +153,7 @@ def createParser():
 
 
 def main():
-    parser = createParser()
+    parser = create_parser()
     args = parser.parse_args()
 
     if args.output:
