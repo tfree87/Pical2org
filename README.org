@@ -1,0 +1,23 @@
+#+options: ':nil *:t -:t ::t <:t H:3 \n:nil ^:t arch:headline
+#+options: author:t broken-links:nil c:nil creator:nil
+#+options: d:(not "LOGBOOK") date:t e:t email:nil f:t inline:t num:t
+#+options: p:nil pri:nil prop:nil stat:t tags:t tasks:t tex:t
+#+options: timestamp:t title:t toc:t todo:t |:t
+#+title: README
+#+date: <2021-12-21 Tue>
+#+author: Thomas Freeman
+#+email: thomas@TF-HP-Notebook
+#+language: en
+#+select_tags: export
+#+exclude_tags: noexport
+#+creator: Emacs 27.1 (Org mode 9.4.6)
+
+* Pical2org
+A python script to convert an iCalendar file (.ics) to a text file formatted for org-mode.
+
+* Rationale
+** What was this project created for?
+This project was created to help put my Google and Outlook calendar data into org-mode so there would be a centralized location for me to find my daily tasks and appointments. This script will take any iCalendar file and create a file readable by org-mode.
+** Why create this project when there are so many other options out there?
+1. I had issues getting the org-gcal package (https://github.com/kidd/org-gcal.el/issues) to work properly with repeating events (https://github.com/kidd/org-gcal.el/issues/165). I also tend to keep my Google Calendar separate from org-mode as I focus on using org-mode for tasks and projects and I prefer the Google Calendar GUI for creating events.
+2. The awk script ical2org (https://github.com/msherry/ical2org/blob/master/ical2org.awk) is fantastic, but it does not process EXDATE rules.

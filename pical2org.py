@@ -3,8 +3,9 @@
 import os
 import sys
 import argparse
-from datetime import datetime, timezone
+from datetime import datetime, timedelta
 from icalendar import Calendar
+import recurring_ical_events
 
 
 def datetime2String(dateTime):
@@ -41,12 +42,14 @@ class orgEvent:
         results = ""
         results = "* {}\n".format(self.summary)
 
+        # Event has a start time and end time
         if self.dtstart and self.dtend:
             results += "  <{}>--<{}>\n".format(
                 datetime2String(self.dtstart),
                 datetime2String(self.dtend),
             )
 
+        # Event only has a start time
         elif self.dtstart and not self.dtend:
             results += "  <{}>\n".format(datetime2String(self.dtstart))
 
@@ -56,14 +59,19 @@ class orgEvent:
 
 
 class Convertor:
-    def __init__(self, iCalendar):
+    def __init__(self, iCalendar, window=365):
         icalFile = open(iCalendar, "r", encoding="utf-8")
         self.calendar = Calendar.from_ical(icalFile.read())
+        self.startDate = datetime.now() - timedelta(days=window)
+        self.endDate = datetime.now() + timedelta(days=window)
 
     def __call__(self):
         results = ""
 
-        for component in self.calendar.walk("VEVENT"):
+        events = recurring_ical_events.of(self.calendar).between(
+            self.startDate, self.endDate
+        )
+        for component in events:
             event = orgEvent(component)
             results += str(event)
 
@@ -108,6 +116,18 @@ def createParser():
         metavar="OUTPUT_FILE",
     )
 
+    # Add a window determining how many days to convert events
+    parser.add_argument(
+        "-w",
+        "--window",
+        help="Length of time before and after today in which events will be collected",
+        action="store",
+        type=int,
+        nargs=1,
+        metavar="NUM_OF_DAYS",
+        default=365,
+    )
+
     return parser
 
 
@@ -125,7 +145,7 @@ def main():
                 "file".format(outfile=args.output[0])
             )
         else:
-            convertor = Convertor(args.INPUT_FILE)
+            convertor = Convertor(args.INPUT_FILE, args.window)
             with open(args.output[0], "w") as outFile:
                 outFile.write(convertor())
 
