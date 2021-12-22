@@ -8,6 +8,9 @@ from icalendar import Calendar
 import recurring_ical_events
 
 
+WINDOW = 365
+
+
 def org_date(dateTime):
     if isinstance(dateTime, datetime):
         return dateTime.astimezone().strftime("<%Y-%m-%d %a %H:%M>")
@@ -83,8 +86,8 @@ class Convertor:
     def __init__(self, args):
         icalFile = open(args.INPUT_FILE, "r", encoding="utf-8")
         self.calendar = Calendar.from_ical(icalFile.read())
-        self.startDate = datetime.now() - timedelta(days=args.window[0])
-        self.endDate = datetime.now() + timedelta(days=args.window[0])
+        self.startDate = datetime.now() - timedelta(days=WINDOW)
+        self.endDate = datetime.now() + timedelta(days=WINDOW)
 
     def __call__(self):
         results = ""
@@ -144,8 +147,7 @@ def create_parser():
         help="Length of time before and after today in which events will be collected",
         action="store",
         type=int,
-        nargs=1,
-        metavar="NUM_OF_DAYS",
+        nargs="?",
         default=365,
     )
 
@@ -164,6 +166,8 @@ def create_parser():
 def main():
     parser = create_parser()
     args = parser.parse_args()
+
+    WINDOW = args.window
 
     if args.output:
 
