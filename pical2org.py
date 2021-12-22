@@ -15,6 +15,18 @@ def orgDate(dateTime):
         return dateTime.strftime("<%Y-%m-%d %a>")
 
 
+def createHeader(title="Calendar", author="", email=""):
+    results = ""
+    results += "#+TITLE: {}\n".format(title)
+    results += "#+AUTHOR: {}\n".format(author)
+    results += "#+EMAIL: {}\n".format(email)
+    results += "#+DESCRIPTION: converted using the Pical2org python script\n"
+    results += "#+CATEGORY: calendar\n"
+    results += "\n\n"
+
+    return results
+
+
 class orgEvent:
     def __init__(self, event):
         # Store the summary of the event
@@ -68,15 +80,15 @@ class orgEvent:
 
 
 class Convertor:
-    def __init__(self, iCalendar, window=365):
-        icalFile = open(iCalendar, "r", encoding="utf-8")
+    def __init__(self, args):
+        icalFile = open(args.INPUT_FILE, "r", encoding="utf-8")
         self.calendar = Calendar.from_ical(icalFile.read())
-        self.startDate = datetime.now() - timedelta(days=window)
-        self.endDate = datetime.now() + timedelta(days=window)
+        self.startDate = datetime.now() - timedelta(days=args.window[0])
+        self.endDate = datetime.now() + timedelta(days=args.window[0])
 
     def __call__(self):
         results = ""
-
+        results = createHeader()
         events = recurring_ical_events.of(self.calendar).between(
             self.startDate, self.endDate
         )
@@ -109,7 +121,7 @@ def createParser():
     )
 
     # Tell the parser which version of the script this is
-    parser.version = "0.1"
+    parser.version = "1.0"
 
     # Add an argument to accept an input file
     parser.add_argument("INPUT_FILE", help="A ical (.ics) file to be read.")
@@ -154,13 +166,13 @@ def main():
                 "file".format(outfile=args.output[0])
             )
         else:
-            convertor = Convertor(args.INPUT_FILE, args.window)
+            convertor = Convertor(args)
             with open(args.output[0], "w") as outFile:
                 outFile.write(convertor())
 
     # If no output file is given print data to stdout
     else:
-        convertor = Convertor(args.INPUT_FILE)
+        convertor = Convertor(args)
         print(convertor())
 
 
