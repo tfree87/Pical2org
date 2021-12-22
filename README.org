@@ -15,6 +15,8 @@
 * Pical2org
 A python script to convert an iCalendar file (.ics) to a text file formatted for org-mode.
 
+*Note:* /This script will create a single entry for each repeated event from the iCalendar file./ While this is not elegant, this trade off is useful as it allows for greater ability to specify repeated appointments by allowing for the removal of individual events.
+
 * Rationale
 ** What was this project created for?
 This project was created to help put my Google and Outlook calendar data into org-mode so there would be a centralized location for me to find my daily tasks and appointments. This script will take any iCalendar file and create a file readable by org-mode.

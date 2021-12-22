@@ -8,11 +8,11 @@ from icalendar import Calendar
 import recurring_ical_events
 
 
-def datetime2String(dateTime):
+def orgDate(dateTime):
     if isinstance(dateTime, datetime):
-        return dateTime.astimezone().strftime("%Y-%m-%d %H:%M")
+        return dateTime.astimezone().strftime("<%Y-%m-%d %a %H:%M>")
     else:
-        return dateTime.strftime("%Y-%m-%d")
+        return dateTime.strftime("<%Y-%m-%d %a>")
 
 
 class orgEvent:
@@ -26,8 +26,17 @@ class orgEvent:
 
         # Store the start and end time of the event
         self.dtstart = event.get("dtstart").dt
+
+        self.isDateTime = isinstance(self.dtstart, datetime)
+
         if event.get("dtend") is not None:
             self.dtend = event.get("dtend").dt
+
+            # If all day event, then dtstart and dtend are datetime.date
+            # objects and dtend is exactly one day in the future.
+            # The dtend can be removed to make it more elegant in org-mode
+            if not self.isDateTime and self.dtend == self.dtstart + timedelta(days=1):
+                self.dtend = None
         else:
             self.dtend = None
 
@@ -44,14 +53,14 @@ class orgEvent:
 
         # Event has a start time and end time
         if self.dtstart and self.dtend:
-            results += "  <{}>--<{}>\n".format(
-                datetime2String(self.dtstart),
-                datetime2String(self.dtend),
+            results += "{}--{}\n".format(
+                orgDate(self.dtstart),
+                orgDate(self.dtend),
             )
 
         # Event only has a start time
         elif self.dtstart and not self.dtend:
-            results += "  <{}>\n".format(datetime2String(self.dtstart))
+            results += "{}\n".format(orgDate(self.dtstart))
 
         results += "{}\n".format(self.description)
 
