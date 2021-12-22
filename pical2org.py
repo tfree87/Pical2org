@@ -149,6 +149,15 @@ def create_parser():
         default=365,
     )
 
+    # Add an option to force clobbering of the output file
+    parser.add_argument(
+        "-f",
+        "--force_clobber",
+        help="Force clobbering of and output file i the file already exists. If this option is provided, the output file will overwrite the existing file with the same name.",
+        action="store_true",
+        default=False,
+    )
+
     return parser
 
 
