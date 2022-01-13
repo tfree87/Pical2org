@@ -1,6 +1,6 @@
 #+options: ':nil *:t -:t ::t <:t H:3 \n:nil ^:t arch:headline
 #+options: author:t broken-links:nil c:nil creator:nil
-#+options: d:(not "LOGBOOK") date:t e:t email:nil f:t inline:t num:t
+#+options: d:(not "LOGBOOK") date:t e:t email:nil f:t inline:t num:nil
 #+options: p:nil pri:nil prop:nil stat:t tags:t tasks:t tex:t
 #+options: timestamp:t title:t toc:t todo:t |:t
 #+title: README
@@ -23,3 +23,8 @@ This project was created to help put my Google and Outlook calendar data into or
 ** Why create this project when there are so many other options out there?
 1. I had issues getting the org-gcal package (https://github.com/kidd/org-gcal.el/issues) to work properly with repeating events (https://github.com/kidd/org-gcal.el/issues/165). I also tend to keep my Google or Outlook calendar separate from org-mode as I focus on using org-mode for tasks and projects and I prefer the GUI for creating events as there is more fine detail to the rules for recurring events than org-mode supports with its basic repeaters.
 2. The awk script ical2org (https://github.com/msherry/ical2org/blob/master/ical2org.awk) is fantastic, but it does not process EXDATE rules which is something that the python library ~recurring-icalendar-events~ does support.
+* Future
+Here is a list of planned upcoming changes to this project:
+- [ ] Process ~.ics~ files from a url using the ~request~ Python library and process them so they do not have to be downloaded and saved onto the host system and removed later
+- [ ] Add options to modify the header of the org file
+- [ ] Create an option to insert or append the results into an existing org-mode file
