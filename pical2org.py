@@ -102,7 +102,7 @@ class Convertor:
             
         return results 
     
-    def read_file(self, file_name):
+    def read_file(self, path):
         """Open the file from the local system or a url and return it
         
         Take a string representing either a url of a file or a name of
@@ -114,11 +114,13 @@ class Convertor:
             A url of a remote file or a path to a local file
         
         """
-        if validators.url(file_name) is True:
-            f = urlopen(file_name)
+        # Check to see if path is a remote url
+        if validators.url(path) is True:
+            f = urlopen(path)
+        # Otherwise, assume it is a local path
         else:
             try:
-                f = open(file_name, "r", encoding="utf-8")
+                f = open(path, "r", encoding="utf-8")
             except OSError:
                 print("Could not open/read file: ", f)
                 sys.exit()
