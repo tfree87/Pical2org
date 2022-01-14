@@ -100,23 +100,19 @@ class Convertor:
             event = orgEvent(component)
             results += str(event)
             
-        return results
+        return results 
     
     def read_file(self, file_name):
         """Open the file from the local system or a url and return it
-
+        
         Take a string representing either a url of a file or a name of
         a local file and return the open file.
-
+        
         Parameters
         ----------
         file_name : str
             A url of a remote file or a path to a local file
-
-        Examples
-        --------
-        FIXME: Add docs.
-
+        
         """
         if validators.url(file_name) is True:
             f = urlopen(file_name)
@@ -129,7 +125,7 @@ class Convertor:
                 
         return f
 
-
+    
 def create_parser():
     """Creates the default ArgumentParser object for the script
 
