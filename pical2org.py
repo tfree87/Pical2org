@@ -6,7 +6,8 @@ import argparse
 from datetime import datetime, timedelta
 from icalendar import Calendar
 import recurring_ical_events
-
+from urllib.request import urlopen
+import validators
 
 WINDOW = 365
 
@@ -84,7 +85,7 @@ class orgEvent:
 
 class Convertor:
     def __init__(self, args):
-        icalFile = open(args.INPUT_FILE, "r", encoding="utf-8")
+        icalFile = self.read_file(args.INPUT_FILE)
         self.calendar = Calendar.from_ical(icalFile.read())
         self.startDate = datetime.now() - timedelta(days=WINDOW)
         self.endDate = datetime.now() + timedelta(days=WINDOW)
@@ -98,8 +99,20 @@ class Convertor:
         for component in events:
             event = orgEvent(component)
             results += str(event)
-
+            
         return results
+    
+    def read_file(self, file_name):
+        if validators.url(file_name) is True:
+            f = urlopen(file_name)
+        else:
+            try:
+                f = open(file_name, "r", encoding="utf-8")
+            except OSError:
+                print("Could not open/read file:", f)
+                sys.exit()
+                
+        return f
 
 
 def create_parser():
@@ -159,7 +172,7 @@ def create_parser():
         action="store_true",
         default=False,
     )
-
+    
     return parser
 
 
