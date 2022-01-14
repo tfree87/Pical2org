@@ -190,11 +190,12 @@ def create_parser():
 def main():
     parser = create_parser()
     args = parser.parse_args()
-
+    
     WINDOW = args.window
-
+    
+    # Check to see if results should be saved to a file
     if args.output:
-
+        
         # Check if a file with the same name as output file exists
         if os.path.exists(args.output[0]) and not args.force_clobber:
             print(
@@ -213,5 +214,6 @@ def main():
         print(convertor())
 
 
+# If this file is called directly, then execute main()
 if __name__ == "__main__":
     main()
