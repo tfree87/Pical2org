@@ -120,7 +120,7 @@ class Convertor:
             try:
                 f = open(file_name, "r", encoding="utf-8")
             except OSError:
-                print("Could not open/read file:", f)
+                print("Could not open/read file: ", f)
                 sys.exit()
                 
         return f
@@ -151,7 +151,7 @@ def create_parser():
     parser.version = "1.0"
 
     # Add an argument to accept an input file
-    parser.add_argument("INPUT_FILE", help="A ical (.ics) file to be read.")
+    parser.add_argument("INPUT_FILE", help="A ical (.ics) file to be read. This can either be a path to a local or it may be a url to a remote file.")
 
     # Add an option to output results to a file instead of stdout
     parser.add_argument(
