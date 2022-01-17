@@ -27,7 +27,7 @@ def create_header(title="Calendar", author="", email=""):
     results += "#+DESCRIPTION: converted using the Pical2org python script\n"
     results += "#+CATEGORY: calendar\n"
     results += "\n\n"
-
+    
     return results
 
 
@@ -39,15 +39,15 @@ class orgEvent:
             self.summary = self.summary.replace("\\,", ",")
         else:
             self.summary = "(No title)"
-
+            
         # Store the start and end time of the event
         self.dtstart = event.get("dtstart").dt
-
+        
         self.isDateTime = isinstance(self.dtstart, datetime)
-
+        
         if event.get("dtend") is not None:
             self.dtend = event.get("dtend").dt
-
+            
             # If all day event, then dtstart and dtend are datetime.date
             # objects and dtend is exactly one day in the future.
             # The dtend can be removed to make it more elegant in org-mode
@@ -55,14 +55,14 @@ class orgEvent:
                 self.dtend = None
         else:
             self.dtend = None
-
+            
         # Store the description of the event
         if event.get("description") is not None:
             self.description = "\n".join(event.get("description").split("\\n"))
             self.description = self.description.replace("\\,", ",")
         else:
             self.description = ""
-
+            
     def __str__(self):
         results = ""
         results = "* {}\n".format(self.summary)
@@ -73,13 +73,13 @@ class orgEvent:
                 org_date(self.dtstart),
                 org_date(self.dtend),
             )
-
+            
         # Event only has a start time
         elif self.dtstart and not self.dtend:
             results += "{}\n".format(org_date(self.dtstart))
-
+            
         results += "{}\n".format(self.description)
-
+        
         return results
 
 
