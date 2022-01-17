@@ -15,6 +15,24 @@
 
 A python script to convert an iCalendar file (.ics) to a text file formatted for org-mode.
 
+#+begin_src plantuml :exports results :file diagram.png
+@startuml
+digraph a {
+
+".ics File" [shape=note]
+Pical2org [shape=ellipse]
+".org File" [shape=note]
+
+".ics File" -> Pical2org
+
+Pical2org -> ".org File"
+
+}
+@enduml
+#+end_src
+
+[[./diagram.png]]
+
 *Note:* /This script will create a single entry for each repeated event from the iCalendar file./ While this is not elegant, this trade off is useful as it allows for greater ability to specify repeated appointments by allowing for the removal of individual events.
 
 * Rationale
