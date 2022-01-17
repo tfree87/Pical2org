@@ -31,7 +31,7 @@ Pical2org -> ".org File"
 @enduml
 #+end_src
 
-[[./diagram.png]]
+[[diagram.png]]
 
 *Note:* /This script will create a single entry for each repeated event from the iCalendar file./ While this is not elegant, this trade off is useful as it allows for greater ability to specify repeated appointments by allowing for the removal of individual events.
 
