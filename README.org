@@ -32,7 +32,7 @@ Pical2org -> ".org File"
 #+end_src
 
 #+ATTR_HTML: title="Diagram of Pical2org process"
-[[diagram.png]]
+[[./diagram.png]]
 
 *Note:* /This script will create a single entry for each repeated event from the iCalendar file./ While this is not elegant, this trade off is useful as it allows for greater ability to specify repeated appointments by allowing for the removal of individual events.
 
