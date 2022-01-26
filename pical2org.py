@@ -27,7 +27,7 @@ def create_header(title="Calendar", author="", email=""):
     results += "#+DESCRIPTION: converted using the Pical2org python script\n"
     results += "#+CATEGORY: calendar\n"
     results += "\n\n"
-    
+
     return results
 
 
@@ -39,15 +39,15 @@ class orgEvent:
             self.summary = self.summary.replace("\\,", ",")
         else:
             self.summary = "(No title)"
-            
+
         # Store the start and end time of the event
         self.dtstart = event.get("dtstart").dt
-        
+
         self.isDateTime = isinstance(self.dtstart, datetime)
-        
+
         if event.get("dtend") is not None:
             self.dtend = event.get("dtend").dt
-            
+
             # If all day event, then dtstart and dtend are datetime.date
             # objects and dtend is exactly one day in the future.
             # The dtend can be removed to make it more elegant in org-mode
@@ -55,14 +55,14 @@ class orgEvent:
                 self.dtend = None
         else:
             self.dtend = None
-            
+
         # Store the description of the event
         if event.get("description") is not None:
             self.description = "\n".join(event.get("description").split("\\n"))
             self.description = self.description.replace("\\,", ",")
         else:
             self.description = ""
-            
+
     def __str__(self):
         results = ""
         results = "* {}\n".format(self.summary)
@@ -73,13 +73,13 @@ class orgEvent:
                 org_date(self.dtstart),
                 org_date(self.dtend),
             )
-            
+
         # Event only has a start time
         elif self.dtstart and not self.dtend:
             results += "{}\n".format(org_date(self.dtstart))
-            
+
         results += "{}\n".format(self.description)
-        
+
         return results
 
 
@@ -99,20 +99,20 @@ class Convertor:
         for component in events:
             event = orgEvent(component)
             results += str(event)
-            
-        return results 
-    
+
+        return results
+
     def read_file(self, path):
         """Open the file from the local system or a url and return it
-        
+
         Take a string representing either a url of a file or a name of
         a local file and return the open file.
-        
+
         Parameters
         ----------
         file_name : str
             A url of a remote file or a path to a local file
-        
+
         """
         # Check to see if path is a remote url
         if validators.url(path) is True:
@@ -124,10 +124,10 @@ class Convertor:
             except OSError:
                 print("Could not open/read file: ", f)
                 sys.exit()
-                
+
         return f
 
-    
+
 def create_parser():
     """Creates the default ArgumentParser object for the script
 
@@ -144,7 +144,10 @@ def create_parser():
 
     # Create the parser
     parser = argparse.ArgumentParser(
-        description="Converts an ical (.ics) file into a text file formatted for use in Emacs org-mde.",
+        description=(
+            "Converts an ical (.ics) file into a text file formatted for use in Emacs"
+            " org-mde."
+        ),
         add_help=True,
         fromfile_prefix_chars="@",
     )
@@ -153,7 +156,13 @@ def create_parser():
     parser.version = "1.0"
 
     # Add an argument to accept an input file
-    parser.add_argument("INPUT_FILE", help="A ical (.ics) file to be read. This can either be a path to a local or it may be a url to a remote file.")
+    parser.add_argument(
+        "INPUT_FILE",
+        help=(
+            "A ical (.ics) file to be read. This can either be a path to a local or it"
+            " may be a url to a remote file."
+        ),
+    )
 
     # Add an option to output results to a file instead of stdout
     parser.add_argument(
@@ -181,23 +190,27 @@ def create_parser():
     parser.add_argument(
         "-f",
         "--force_clobber",
-        help="Force clobbering of and output file i the file already exists. If this option is provided, the output file will overwrite the existing file with the same name.",
+        help=(
+            "Force clobbering of and output file i the file already exists. If this"
+            " option is provided, the output file will overwrite the existing file with"
+            " the same name."
+        ),
         action="store_true",
         default=False,
     )
-    
+
     return parser
 
 
 def main():
     parser = create_parser()
     args = parser.parse_args()
-    
+
     WINDOW = args.window
-    
+
     # Check to see if results should be saved to a file
     if args.output:
-        
+
         # Check if a file with the same name as output file exists
         if os.path.exists(args.output[0]) and not args.force_clobber:
             print(
