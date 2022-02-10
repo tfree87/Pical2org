@@ -54,6 +54,7 @@ In order to process the icalendar files, the following Python libraries will nee
 - six
   
 * Usage
+Below is documentation on how to use Pical2org.
 ** Command Line Arguments
 The command line arguments for Pical2org are shown below in the help documentation produced from the command ~python3 pical2org.py -h~:
 #+begin_quote
@@ -80,7 +81,7 @@ If you want to have your online cloud-based calendar regularly, you can run the 
 
   PICAL2ORG=/path/to/pical2org.py
   ORGFILE=/path/to/orgfile.org
-  URL=<<url or path to .ics file>>
+  URL="url or path to .ics file"
 
   python3 $PICAL2ORG -f -w 1000 -o $ORGFILE $URL
   
