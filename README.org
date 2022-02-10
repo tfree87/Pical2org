@@ -38,7 +38,6 @@ Pical2org -> ".org File"
 *Note:* /This script will create a single entry for each repeated event from the iCalendar file./ While this is not elegant, this trade off is useful as it allows for greater ability to specify repeated appointments by allowing for the removal of individual events.
 
 * Rationale
-** What was this project created for?
 This project was created to help put my Google and Outlook calendar data into org-mode so there would be a centralized location for me to find my daily tasks and appointments. This script will take any iCalendar file and create a file readable by org-mode.
 ** Why create this project when there are so many other options out there?
 1. I had issues getting the org-gcal package (https://github.com/kidd/org-gcal.el/issues) to work properly with repeating events (https://github.com/kidd/org-gcal.el/issues/165). I also tend to keep my Google or Outlook calendar separate from org-mode as I focus on using org-mode for tasks and projects and I prefer the GUI for creating events as there is more fine detail to the rules for recurring events than org-mode supports with its basic repeaters.
