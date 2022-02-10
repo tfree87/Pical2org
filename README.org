@@ -1,8 +1,3 @@
-#+options: ':nil *:t -:t ::t <:t H:3 \n:nil ^:t arch:headline
-#+options: author:t broken-links:nil c:nil creator:nil
-#+options: d:(not "LOGBOOK") date:t e:t email:nil f:t inline:t num:nil
-#+options: p:nil pri:nil prop:nil stat:t tags:t tasks:t tex:t
-#+options: timestamp:t title:t toc:t todo:t |:t
 #+title: Pical2org
 #+date: <2021-12-21 Tue>
 #+author: Thomas Freeman
@@ -11,6 +6,12 @@
 #+select_tags: export
 #+exclude_tags: noexport
 #+creator: Emacs 27.1 (Org mode 9.4.6)
+
+#+options: ':nil *:t -:t ::t <:t H:3 \n:nil ^:t arch:headline
+#+options: author:t broken-links:nil c:nil creator:nil
+#+options: d:(not "LOGBOOK") date:t e:t email:nil f:t inline:t num:nil
+#+options: p:nil pri:nil prop:nil stat:t tags:t tasks:t tex:t
+#+options: timestamp:t title:t toc:t todo:t |:t
 
 
 A python script to convert an iCalendar file (.ics) to a text file formatted for org-mode.
@@ -42,6 +43,49 @@ This project was created to help put my Google and Outlook calendar data into or
 ** Why create this project when there are so many other options out there?
 1. I had issues getting the org-gcal package (https://github.com/kidd/org-gcal.el/issues) to work properly with repeating events (https://github.com/kidd/org-gcal.el/issues/165). I also tend to keep my Google or Outlook calendar separate from org-mode as I focus on using org-mode for tasks and projects and I prefer the GUI for creating events as there is more fine detail to the rules for recurring events than org-mode supports with its basic repeaters.
 2. The awk script ical2org (https://github.com/msherry/ical2org/blob/master/ical2org.awk) is fantastic, but it does not process EXDATE rules which is something that the python library ~recurring-icalendar-events~ does support.
+* Requirements
+Python 3 is required to execute the code. Pical2org is /not/ backwards compatible with Python 2.
+
+In order to process the icalendar files, the following Python libraries will need to be installed using a tool such as ~pip install~:
+- icalendar
+- python-dateutil
+- pytz
+- recurring_ical_events
+- six
+  
+* Usage
+** Command Line Arguments
+The command line arguments for Pical2org are shown below in the help documentation produced from the command ~python3 pical2org.py -h~:
+#+begin_quote
+usage: pical2org.py [-h] [-o OUTPUT_FILE] [-w [WINDOW]] [-f] INPUT_FILE
+
+Converts an ical (.ics) file into a text file formatted for use in Emacs org-mde.
+
+positional arguments:
+  INPUT_FILE            A ical (.ics) file to be read. This can either be a path to a local or it may be a url to a remote file.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -o OUTPUT_FILE, --output OUTPUT_FILE
+                        Name of file to store the output results.
+  -w [WINDOW], --window [WINDOW]
+                        Length of time before and after today in which events will be collected
+  -f, --force_clobber   Force clobbering of and output file i the file already exists. If this option is provided, the output file will overwrite the existing file
+                        with the same name.
+#+end_quote
+** Cron Job
+If you want to have your online cloud-based calendar regularly, you can run the following template Bash script as a cron job:
+#+begin_src shell
+  #!/bin/bash
+
+  PICAL2ORG=/path/to/pical2org.py
+  ORGFILE=/path/to/orgfile.org
+  URL=<<url or path to .ics file>>
+
+  python3 $PICAL2ORG -f -w 1000 -o $ORGFILE $URL
+  
+#+end_src
+In the above, example, a window of 1000 days is used to collect events 1000 days into the future and into the past. To download /all/ the events, remove this argument or you may reduce this number to decrease the size of the output org file. The ~-f~ argument will overwrite the existing org file with the updated version.
 * Future
 Here is a list of planned upcoming changes to this project:
 - [X] Process ~.ics~ files from a url using the ~request~ Python library and process them so they do not have to be downloaded and saved onto the host system and removed later
